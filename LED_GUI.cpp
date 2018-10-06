@@ -1,5 +1,37 @@
-// Bo Williams
-// LED GUI
+/*
+  Smart LED Project
+  COP4331C
+  Pedrhom Nafisi
+  Bo Williams
+  Daniel Ohana
+  Brandon Kessler
+*/
+
+/*
+  This code allows the user to set the number of slides to loop through on
+  the LED board and customize the text shown. The customizations include
+  the actual text sent to the screen, the size and color of the text, and
+  whether the text is animated or not.
+*/
+
+/*
+  What the output file will be:
+  1st line: number of slides to be looped through on LED.
+  2nd line: length of time (in seconds) each slide will be shown for.
+  The rest of the ouput file is reliant upon the first line (number of slides)
+  Each slide will contain four lines in the output file, each indicating a
+  different aspect of each slide:
+    The first line indicates the string to be outputted to the LED.
+    The second line indicates the size of the text as an enum: 0 for small,
+    1 for medium, and 2 for large.
+    The third line indicates the color of the text as an enum: 0 for red,
+    1 for green, 2 for blue, 3 for yellow, 4 for white, 5 for black, 6 for cyan,
+    and 7 for magenta.
+    The fourth line indicates the animation of the text as an enum: 0 for no
+    animation, 1 for flashing, 2 for scrolling, and 3 for waving.
+  If there are multiple slides, the previous 4 lines will loop through again
+  until we finish the last slide.
+*/
 
 #include <iostream>
 #include <string>
@@ -9,8 +41,8 @@
 using namespace std;
 
 enum TEXTSIZE {SMALL, MEDIUM, LARGE};
-enum ANIMATION {NONE, FLASH, SCROLL, WAVE};
 enum COLOR {RED, GREEN, BLUE, YELLOW, WHITE, BLACK, CYAN, MAGENTA};
+enum ANIMATION {NONE, FLASH, SCROLL, WAVE};
 
 class LED {
   public:
@@ -49,6 +81,7 @@ class TextSlide : public LED {
     TEXTSIZE textSize;
     ANIMATION animation;
     COLOR color;
+    int slideNum;
 
     void setText(string userText) {
       text = userText;
@@ -65,19 +98,42 @@ class TextSlide : public LED {
     void setColor(COLOR colour) {
       color = colour;
     }
+
+    void setSlideNum(int slideNumber) {
+      slideNum = slideNumber;
+    }
+
+    string getText() {
+      return text;
+    }
+
+    TEXTSIZE getTextSize() {
+      return textSize;
+    }
+
+    ANIMATION getAnimation() {
+      return animation;
+    }
+
+    COLOR getColor() {
+      return color;
+    }
+
+    int getSlideNum() {
+      return slideNum;
+    }
 };
 
+// Output the number of slides and how long each will be up
 void outputSlideParam(LED led, ofstream file) {
-  // file.open("out.txt");
   file << led.numberOfSlides;
   file << "\n";
   file << led.secondsToLoop;
   file << "\n";
-  // file.close();
 }
 
+// Output the TextSlide values
 void outputTextSlideToFile(TextSlide txtSlide, ofstream file) {
-  // file.open("out.txt");
   file << txtSlide.text;
   file << "\n";
   file << txtSlide.textSize;
@@ -86,7 +142,6 @@ void outputTextSlideToFile(TextSlide txtSlide, ofstream file) {
   file << "\n";
   file << txtSlide.animation;
   file << "\n";
-  // file.close();
 }
 
 int main() {
@@ -105,8 +160,8 @@ int main() {
 
   list<TextSlide> slides;
 
+  // Get the user input for what they want outputted to LED
   for(int i = 0; i < led.numberOfSlides; i++) {
-    // TODO: Create new TextSlide object to store in array
     led.setCurrentSlideNumber(i);
 
     cout << "Input the text you want displayed: \n";
@@ -160,31 +215,32 @@ int main() {
     else
       txtSlide.setAnimation(WAVE);
 
+    // Store in a list to be read from later
     slides.push_back(txtSlide);
   }
 
+  // Output the values needed to a text file
+  outFile.open ("out.txt");
+  // outputSlideParam(led, outFile);
 
-  // txtSlide.outFile.open ("out.txt");
-  // outputSlideParam(led, txtSlide.outFile);
-  for(TextSlide slide : slides) {
-    // outputTextSlideToFile(slide, txtSlide.outFile);
-    cout << "\n\n";
-    cout << led.getNumSlides();
-    cout << "\n";
-    cout << led.getLoopTime();
-    cout << "\n";
-    cout << txtSlide.getCurrentSlide();
-    cout << "\n";
-    cout << txtSlide.text;
-    cout << "\n";
-    cout << txtSlide.textSize;
-    cout << "\n";
-    cout << txtSlide.color;
-    cout << "\n";
-    cout << txtSlide.animation;
-    cout << "\n";
+  outFile << led.getNumSlides();
+  outFile << "\n";
+  outFile << led.getLoopTime();
+  outFile << "\n";
+
+  for(list<TextSlide> :: iterator slide = slides.begin(); slide != slides.end(); slide++) {
+    // outputTextSlideToFile(slide, outFile);
+
+    outFile << slide->getText();
+    outFile << "\n";
+    outFile << slide->getTextSize();
+    outFile << "\n";
+    outFile << slide->getColor();
+    outFile << "\n";
+    outFile << slide->getAnimation();
+    outFile << "\n";
   }
-  // txtSlide.outFile.close();
+  outFile.close();
 
   return 0;
 }
