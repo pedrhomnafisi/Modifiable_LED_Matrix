@@ -9,10 +9,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <vector>
-
-// TODO: Find out solution for images with ratio close to but less than 1.0.
-// TODO: Get RGB image values instead of single values.
-
+#include <fstream>
 
 using namespace cv;
 using namespace std;
@@ -23,21 +20,16 @@ int main(int argc, const char * argv[]) {
     double ratioH, ratioW;
     
     // Load image from path.
-    Mat img = imread("/Users/danny/Desktop/Processes of OO Software/Developer/image_resizer/image_resizer/ratio_test.jpg");
+    Mat img = imread("/Users/danny/Desktop/Processes of OO Software/Developer/image_resizer/image_resizer/wide_test.jpg");
     
     cv::Size s = img.size();
     height = s.height;
     width = s.width;
     
-    cout << "Original image dimensions: ";
-    cout << s.height;
-    cout << "x";
-    cout << s.width;
-    cout<< " pixels\n";
+    double ratio = (double) width / (double) height;
     
-    // Tall image
-    if(height > width) {
-        double ratio = (double) width / (double) height;
+    // Tall image or Wide image
+    if (height > width || (height < width && (1 / ratio > 0.5))) {
         newH = 32;
         newW = newH*ratio;
         ratioH = (double) newH / (double) height;
@@ -45,8 +37,7 @@ int main(int argc, const char * argv[]) {
     }
     
     // Wide image
-    else if(height < width && ((double) height / (double) width) <= 0.5) {
-        double ratio = (double) width / (double) height;
+    else if (height < width && (1 / ratio <= 0.5)) {
         newW = 64;
         newH = newW/ratio;
         ratioH = (double) newH / (double) height;
@@ -63,34 +54,53 @@ int main(int argc, const char * argv[]) {
 
     // Print original image.
     cvNamedWindow("Original picture", WINDOW_AUTOSIZE);
-    imshow("Orginal picture", img);
-    
+//    imshow("Orginal picture", img);
     
     // Resize image and print it.
     cv::Mat resized_img;
     cvNamedWindow("Floodfill picture", WINDOW_AUTOSIZE);
     resize(img, resized_img, Size(newW, newH), ratioW, ratioH, CV_INTER_LANCZOS4);
-    imshow("Floodfill picture", resized_img);
+//    imshow("Floodfill picture", resized_img);
     
     cv::Size newS = resized_img.size();
-    cout << "New image dimensions: ";
-    cout << newS.height;
-    cout << " x ";
-    cout << newS.width;
-    cout << " pixels\n";
     
+    // Write new dimensions to the file.
+    ofstream outfile;
+    outfile.open("resized_img.txt");
+    outfile << newS.height;
+    outfile << "\n";
+    outfile << newS.width;
+    outfile << "\n";
     
     // Loop through the image matrix and touch each pixel.
     for (int y = 0; y < newH; y++) {
         for (int x = 0; x < newW; x++) {
-            cout << resized_img.at<uint16_t>(x, y);
-            cout << " ";
+            
+            Vec3f v = resized_img.at<cv::Vec3b>(y,x);
+            
+            // The opencv standard gives the array in BGR format which is why
+            // the indices look off.
+            float blue = v[0];
+            float green = v[1];
+            float red = v[2];
+            
+            // Write RBG values to the file.
+            outfile << red;
+            outfile << ",";
+            outfile << green;
+            outfile << ",";
+            outfile << blue;
+            
+            // Write '~' instead of ',' to indicate the end of the file.
+            if (y == newH - 1 && x == newW - 1) {
+                outfile << "~";
+            } else {
+                outfile << ",";
+            }
         }
-        cout << "\n";
     }
     
-
-    
+    outfile.close();
     
     
     waitKey();
