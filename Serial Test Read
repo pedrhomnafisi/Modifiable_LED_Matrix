@@ -1,0 +1,28 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "SerialPort.h"
+
+using std::cout;
+using std::endl;
+
+char *port_name = "\\\\.\\COM3";
+
+//String for incoming data
+char incData[MAX_DATA_LENGTH];
+
+int main()
+{
+  SerialPort arduino(port_name);
+  if (arduino.isConnected()) cout << "Connection Established" << endl;
+  else cout << "ERROR";
+  
+  while (arduino.isConnected()){
+    //Check data for successful send
+    int read = arduino.readSerialPort(incomingData, MAX_DATA_LENGTH);
+    //Print out data in CMD
+    puts(incData);
+    Sleep(10);
+    }
+}
