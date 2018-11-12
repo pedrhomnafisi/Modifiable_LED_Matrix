@@ -1,0 +1,25 @@
+﻿  LEDMatrix.cpp
+c:\users\brandon\onedrive\ucf\fall_2018\led_matrix\ledgui\ledgui\ledmatrix.h(746): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\brandon\onedrive\ucf\fall_2018\led_matrix\ledgui\ledgui\ledmatrix.h(756): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\brandon\opencv\build\include\opencv2\core\cvstd.hpp(575): warning C4793: 'cv::String::String': function compiled as native:
+  	Found an intrinsic not supported in managed code
+c:\users\brandon\opencv\build\include\opencv2\core\cuda.inl.hpp(105): warning C4793: 'cv::cuda::GpuMat::GpuMat': function compiled as native:
+  	Found an intrinsic not supported in managed code
+c:\users\brandon\opencv\build\include\opencv2\core\cuda.inl.hpp(395): warning C4793: 'cv::cuda::HostMem::HostMem': function compiled as native:
+  	Found an intrinsic not supported in managed code
+c:\users\brandon\opencv\build\include\opencv2\core\mat.inl.hpp(483): warning C4793: 'cv::Mat::Mat': function compiled as native:
+  	Found an intrinsic not supported in managed code
+c:\users\brandon\opencv\build\include\opencv2\core\mat.inl.hpp(807): warning C4793: 'cv::Mat::release': function compiled as native:
+  	Found an intrinsic not supported in managed code
+c:\users\brandon\opencv\build\include\opencv2\core\mat.inl.hpp(2143): warning C4793: 'cv::SparseMat::addref': function compiled as native:
+  	Found an intrinsic not supported in managed code
+c:\users\brandon\opencv\build\include\opencv2\core\mat.inl.hpp(3743): warning C4793: 'cv::UMat::addref': function compiled as native:
+  	Found an intrinsic not supported in managed code
+c:\users\brandon\opencv\build\include\opencv2\core\ptr.inl.hpp(67): warning C4793: 'cv::detail::PtrOwner::incRef': function compiled as native:
+  	Found an intrinsic not supported in managed code
+c:\users\brandon\opencv\build\include\opencv2\core\ptr.inl.hpp(72): warning C4793: 'cv::detail::PtrOwner::decRef': function compiled as native:
+  	Found an intrinsic not supported in managed code
+c:\users\brandon\opencv\build\include\opencv2\core\cvstd.hpp(657): warning C4793: 'cv::String::operator=': function compiled as native:
+  	Found an intrinsic not supported in managed code
+  LEDMatrix.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
+  LEDgui.vcxproj -> C:\Users\Brandon\OneDrive\UCF\Fall_2018\LED_Matrix\LEDgui\x64\Debug\LEDgui.exe
