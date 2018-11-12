@@ -1,0 +1,217 @@
+#include <Ticker.h>
+#include <ESP8266WiFi.h>
+#include <WiFiClientSecure.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+
+// ----------------------------
+// Additional Libraries - each one of these will need to be installed.
+// ----------------------------
+
+
+#include <PxMatrix.h>
+// The library for controlling the LED Matrix
+// Needs to be manually downloaded and installed
+// https://github.com/2dom/PxMatrix
+
+char ssid[] = "The LAN Before Time";       // your network SSID (name)
+char password[] = "Littlefootpowersyourcar";  // your network key
+
+String stringToAnalyze;
+
+Ticker display_ticker;
+
+WiFiClientSecure client;
+
+// Pins for LED MATRIX
+#define P_LAT 16
+#define P_A 5
+#define P_B 4
+#define P_C 15
+#define P_OE 2
+#define P_D 12
+#define P_E 0
+
+// PxMATRIX display(32,16,P_LAT, P_OE,P_A,P_B,P_C);
+// PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C,P_D);
+PxMATRIX display(64, 32, P_LAT, P_OE, P_A, P_B, P_C, P_D, P_E);
+
+// Some standard colors
+uint16_t myRED = display.color565(255, 0, 0);
+uint16_t myGREEN = display.color565(0, 255, 0);
+uint16_t myBLUE = display.color565(0, 0, 255);
+uint16_t myWHITE = display.color565(255, 255, 255);
+uint16_t myYELLOW = display.color565(255, 255, 0);
+uint16_t myCYAN = display.color565(0, 255, 255);
+uint16_t myMAGENTA = display.color565(255, 0, 255);
+uint16_t myBLACK = display.color565(0, 0, 0);
+
+uint16 myCOLORS[8] = {myRED, myGREEN, myBLUE, myWHITE, myYELLOW, myCYAN, myMAGENTA, myBLACK};
+
+// ISR for display refresh
+void display_updater()
+{
+  display.display(70);
+}
+
+// 
+void display_update_enable(bool is_enable)
+{
+
+#ifdef ESP8266
+  if (is_enable)
+    display_ticker.attach(0.002, display_updater);
+  else
+    display_ticker.detach();
+#endif
+
+#ifdef ESP32
+  if (is_enable)
+  {
+    timer = timerBegin(0, 80, true);
+    timerAttachInterrupt(timer, &display_updater, true);
+    timerAlarmWrite(timer, 2000, true);
+    timerAlarmEnable(timer);
+  }
+  else
+  {
+    timerDetachInterrupt(timer);
+    timerAlarmDisable(timer);
+  }
+#endif
+}
+
+void setup() {
+  
+  Serial.begin(9600);
+  delay(20);
+  display.begin(16);
+  display_ticker.attach(0.002, display_updater);
+  yield();
+}
+
+void flashImage(int time)
+{
+  delay(time * 1000);
+  display.clearDisplay();
+  delay(time * 1000);
+  // insert draw here
+}
+
+void image(String stringToA){
+  display.clearDisplay();
+  int i = 0;
+  if(stringToA.charAt(i) == '1'){
+    i = 2;
+    char numSlide[2];
+    char loopTime[2];
+    char text[50];
+    char textsize[2];
+    char color[10];
+    char type[2];
+    char r[4];
+    char g[4];
+    char b[4];
+    while(stringToA.charAt(i) != '~'){
+      for(int j = 0; stringToA.charAt(i) != '~'; j++){
+        numSlide[j] = stringToA.charAt(i);
+        numSlide[j+1] = '\0';
+        i++; 
+      }
+    }
+    i++;
+    while(stringToA.charAt(i) != '~'){
+      for(int j = 0; stringToA.charAt(i) != '~' ; j++){
+        loopTime[j] = stringToA.charAt(i);
+        loopTime[j+1] = '\0';
+        i++; 
+      }
+    }
+    i++;
+    while(stringToA.charAt(i) != '~'){
+      for(int j = 0; stringToA.charAt(i) != '~'; j++){
+        text[j] = stringToA.charAt(i);
+        text[j+1] = '\0';
+        i++; 
+      }
+    }
+    i++;
+    while(stringToA.charAt(i) != '~'){
+      for(int j = 0; stringToA.charAt(i) != '~'; j++){
+        textsize[j] = stringToA.charAt(i);
+        textsize[j+1] = '\0';
+        i++; 
+      }
+    }
+    i++;
+    while(stringToA.charAt(i) != '~'){
+      for(int j = 0; stringToA.charAt(i) != '~'; j++){
+        color[j] = stringToA.charAt(i);
+        color[j+1] = '\0';
+        i++; 
+      }
+    }
+    i++;
+    while(stringToA.charAt(i) != '\0'){
+      for(int j = 0; stringToA.charAt(i) != '\0'; j++){
+        type[j] = stringToA.charAt(i);
+        type[j+1] = '\0';
+        i++; 
+      }
+    }
+    display.setTextSize(atoi(textsize));
+    display.setCursor(0,0);
+    
+    int k = 0;
+    int l = 0;
+    while(color[k] != ' '){
+        r[l] = color[k];
+        r[l+1] = '\0';
+        k++;
+        l++;
+    }
+    k++;
+    l = 0;
+    while(color[k] != ' '){
+        g[l] = color[k];
+        g[l+1] = '\0';
+        k++;
+        l++;
+    }
+    k++;
+    l = 0;
+    while(color[k] != '\0'){
+        b[l] = color[k];
+        b[l+1] = '\0';
+        k++;
+    }
+    int r1 = atoi(r);
+    int g1 = atoi(g);
+    int b1 = atoi(b);
+    uint16_t mycolor = display.color565(r1, g1, b1);
+    display.setTextColor(mycolor);
+    display.print(text);
+  }
+  if(stringToA.charAt(i) == '2'){
+    i = 2;
+  }
+
+
+}
+void newDataWrite(){
+  String input;
+  
+  //If any input is detected in arduino
+  if(Serial.available() > 0){
+    input = Serial.readStringUntil('\n');
+    String stringToA = input;
+    delay(300);
+    image(stringToA);
+  }
+}
+
+void loop() {
+  newDataWrite();
+}
