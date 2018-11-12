@@ -28,8 +28,16 @@ int main(int argc, const char * argv[]) {
     
     double ratio = (double) width / (double) height;
     
+    // Image that fits in LED
+    if (height <= 32 && width <= 64) {
+        newW = width;
+        newH = height;
+        ratioH = (double) newH / (double) height;
+        ratioW = (double) newW / (double) width;
+    }
+
     // Tall image or Wide image
-    if (height > width || (height < width && (1 / ratio > 0.5))) {
+    else if (height > width || (height < width && (1 / ratio > 0.5))) {
         newH = 32;
         newW = newH*ratio;
         ratioH = (double) newH / (double) height;
