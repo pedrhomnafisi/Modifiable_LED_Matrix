@@ -1,0 +1,24 @@
+//Default baud speed for communication
+#define BAUD 9600
+
+void setup(){
+  Serial.begin(BAUD);
+}
+
+void loop(){
+  String input;
+  //If any input is detected in arduino
+  if(Serial.available() > 0){
+    //read the whole string until '\n' delimiter is read
+    input = Serial.readStringUntil('\n');
+    //If input is set up correctly, when the serial sender sends try1 or try2,
+    //then the board will return with one of the following
+    if (input.equals("try1")){
+      Serial.println("try1 was read by the board");
+    } 
+    //To see if the strings can be differentiated
+    else if (input.equals("try2"));
+      Serial.println("try2 was read by the board");
+    }
+  }
+}
